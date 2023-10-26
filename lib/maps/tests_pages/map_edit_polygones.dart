@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_maps_creator_v3/maps/controllers/controller_adit_polygone.dart';
 import 'package:flutter_maps_creator_v3/maps/controllers/controller_search_route.dart';
@@ -17,8 +15,9 @@ class MapEditPolygones extends StatelessWidget {
   final ControllerMapEditPolygone conp = Get.put(ControllerMapEditPolygone());
   final ControllerSearchRoute controllerSeach =
       Get.find<ControllerSearchRoute>();
+  final void Function()? onPressed;
 
-  MapEditPolygones({super.key, this.target});
+  MapEditPolygones({super.key, this.target, this.onPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -49,22 +48,28 @@ class MapEditPolygones extends StatelessWidget {
                 circles: controller.circles,
               );
             }),
+
         Positioned.fill(
             child: Align(
                 alignment: Alignment.bottomCenter,
                 child: Container(
-                  margin:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                  //color: Colors.white,
+                  margin: const EdgeInsets.symmetric(horizontal: 20),
+                  // color: Colors.red,
                   width: size.width,
                   height: size.height * .1,
                   child: GetBuilder<ControllerMapEditPolygone>(
                       id: 'area_buttons',
                       builder: (controller) {
+                        if (controller.typeGeofence == TypeGeofence.Circle) {
+                          return SizedBox.shrink();
+                        }
+
                         return Stack(
                           children: [
                             Card(
-                              elevation: 2,
+                              // margin: ,
+                              // color: Colors.amber,
+                              elevation: 1,
                               shape: const DurmaShape(
                                   borderRadius: Radius.circular(15),
                                   side: BorderSide.none),
@@ -113,9 +118,14 @@ class MapEditPolygones extends StatelessWidget {
                                 const Spacer(),
                                 FloatingActionButton(
                                   onPressed: () {
-                                    log('gola');
+                                    // log('gola');
+
+                                    controller.polyMethods!.polygones.clear();
+                                    controller.polyMethods!.currentPointMove =
+                                        null;
+                                    controller.update(['update_map']);
                                   },
-                                  child: const Icon(Icons.save),
+                                  child: const Icon(Icons.delete),
                                 )
                               ],
                             ),
@@ -123,6 +133,59 @@ class MapEditPolygones extends StatelessWidget {
                         );
                       }),
                 ))),
+
+        Positioned.fill(
+            child: GetBuilder<ControllerMapEditPolygone>(
+                id: 'slider_section',
+                builder: (c) {
+                  if (c.typeGeofence == TypeGeofence.Polygon) {
+                    return SizedBox.shrink();
+                  }
+                  return Align(
+                      alignment: Alignment.centerRight,
+                      child: Card(
+                        elevation: 2,
+                        child: Container(
+                          margin: const EdgeInsets.symmetric(
+                              horizontal: 4, vertical: 10),
+                          // color: Colors.red,
+                          width: size.width * .09,
+                          height: size.height * .5,
+                          child: Column(
+                            children: [
+                              Expanded(
+                                flex: 1,
+                                child: RotatedBox(
+                                  quarterTurns:
+                                      -1, // Rotamos el RangeSlider verticalmente(
+                                  child: Slider(
+                                    // label: c.poiMethods!.radiusPoi.toString(),
+                                    divisions: 25,
+                                    value: c.polyMethods!.radius,
+                                    min: 50,
+                                    max: 200,
+                                    onChanged: (double value) {
+                                      c.polyMethods!.radius = value;
+                                      c.polyMethods!
+                                          .updateMarkPosition(withCircle: true);
+                                      c.update(['update_map']);
+
+                                      c.update(['slider_section']);
+                                    },
+                                  ),
+                                ),
+                              ),
+                              Text(
+                                '${c.polyMethods!.radius.round()}mts',
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 12),
+                              )
+                            ],
+                          ),
+                        ),
+                      ));
+                })),
+
         // AREA DE BUSQUEDA
         Positioned.fill(
             child: Align(
@@ -173,7 +236,11 @@ class MapEditPolygones extends StatelessWidget {
                                           c.startTimer();
                                         }
                                         c.typeGeofence = TypeGeofence.Circle;
-                                        c.update(['buttons_type_geofence']);
+                                        c.update([
+                                          'buttons_type_geofence',
+                                          'slider_section',
+                                          'area_buttons'
+                                        ]);
                                       },
                                       color:
                                           c.typeGeofence == TypeGeofence.Circle
@@ -189,7 +256,11 @@ class MapEditPolygones extends StatelessWidget {
                                           c.startTimer();
                                         }
                                         c.typeGeofence = TypeGeofence.Polygon;
-                                        c.update(['buttons_type_geofence']);
+                                        c.update([
+                                          'buttons_type_geofence',
+                                          'slider_section',
+                                          'area_buttons'
+                                        ]);
                                       },
                                       color:
                                           c.typeGeofence == TypeGeofence.Polygon
@@ -213,7 +284,7 @@ class MapEditPolygones extends StatelessWidget {
                       onTap: conp.handleTap,
                     )
                   : Container())),
-        )
+        ),
       ],
     );
   }

@@ -19,6 +19,15 @@ class GeoelementsMethods {
         });
   }
 
+  Future<void> setIconSvg(UI.Image img, Color color, double size) async {
+    // UI.Image img = await MarkerGenerator.getSvgAsset(urlImg, 'key');
+    iconMark = await MarkerGenerator.createBitmapDescriptor(
+        sizeMarker: size,
+        canvasFuntion: (canvas, size) {
+          MarkerWithImage(color: color, image: img).paint(canvas, size);
+        });
+  }
+
   Future<void> moveAnimated(LatLng latLng) async {
     await controller.animateCamera(CameraUpdate.newLatLng(latLng));
   }

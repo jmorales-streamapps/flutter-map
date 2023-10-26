@@ -3,6 +3,7 @@ import 'package:flutter_maps_creator_v3/maps/customs_markers/marker_generator.da
 import 'package:flutter_maps_creator_v3/maps/customs_markers/marker_pin.dart';
 import 'package:flutter_maps_creator_v3/maps/methods/geelements_methods.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'dart:math' as math;
 
 class PolygonesMethods extends GeoelementsMethods {
   final String googleApiKey;
@@ -12,7 +13,7 @@ class PolygonesMethods extends GeoelementsMethods {
   final Set<Polygon> polygones;
   final Set<Circle> circles;
 
-  MaterialColor colorCircle;
+  Color colorCircle;
 
   double radius;
   List<LatLng> routePoints = [];
@@ -71,8 +72,8 @@ class PolygonesMethods extends GeoelementsMethods {
         circles.add(Circle(
             circleId: const CircleId('unique'),
             center: newPostion,
-            fillColor: colorCircle.shade200,
-            strokeColor: colorCircle.shade300,
+            fillColor: colorCircle.withOpacity(0.2),
+            strokeColor: colorCircle.withOpacity(0.3),
             strokeWidth: 2,
             radius: radius));
       }
@@ -96,8 +97,8 @@ class PolygonesMethods extends GeoelementsMethods {
         circles.add(Circle(
             circleId: const CircleId('unique'),
             center: newPostion,
-            fillColor: colorCircle.shade200,
-            strokeColor: colorCircle.shade300,
+            fillColor: colorCircle.withOpacity(0.2),
+            strokeColor: colorCircle.withOpacity(0.3),
             strokeWidth: 2,
             radius: radius));
       }
@@ -156,5 +157,31 @@ class PolygonesMethods extends GeoelementsMethods {
         canvasFuntion: (canvas, size) {
           PinWithLetter(letter).paint(canvas, size);
         });
+  }
+
+  Future<void> focusCircle({LatLng? location, double? radio}) async {
+    await controller.animateCamera(CameraUpdate.newLatLngZoom(
+        location ?? currentOrigin!, getZoomLevel(radio ?? this.radius)));
+  }
+
+  void focusPolygone(Set<Polygon> p) {
+    setMapFitToTour(p, (minLat, minLong, maxLat, maxLong) {
+      controller.moveCamera(CameraUpdate.newLatLngBounds(
+          LatLngBounds(
+              southwest: LatLng(minLat, minLong),
+              northeast: LatLng(maxLat, maxLong)),
+          80));
+    });
+  }
+
+  double getZoomLevel(double radius) {
+    double zoomLevel = 11;
+    if (radius > 0) {
+      double radiusElevated = radius + radius / 2;
+      double scale = radiusElevated / 500;
+      zoomLevel = 16 - math.log(scale) / math.log(2);
+    }
+    zoomLevel = double.parse(zoomLevel.toStringAsFixed(2));
+    return zoomLevel;
   }
 }

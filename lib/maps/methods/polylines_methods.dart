@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
@@ -186,5 +187,19 @@ class PolylinesMethods extends GeoelementsMethods {
         canvasFuntion: (canvas, size) {
           PinWithLetter(letter).paint(canvas, size);
         });
+  }
+
+  Future<void> focusPolyLine(Set<Polyline> p) async {
+    Completer<void> c = Completer();
+    setMapFitToTour(p, (minLat, minLong, maxLat, maxLong) async {
+      await controller.animateCamera(CameraUpdate.newLatLngBounds(
+          LatLngBounds(
+            southwest: LatLng(minLat, minLong),
+            northeast: LatLng(maxLat, maxLong),
+          ),
+          20));
+      c.complete();
+    });
+    await c.future;
   }
 }

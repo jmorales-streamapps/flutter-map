@@ -31,14 +31,7 @@ class ControllerMapEditPolygone extends GetxController {
         markers,
         Size(Get.width * Get.pixelRatio, Get.height * Get.pixelRatio),
         circles);
-    Future.delayed(const Duration(seconds: 1), () {
-      polyMethods?.updateMarkPosition(
-        useCurrentLatlng: false,
-        fun: () {
-          update(['update_map']);
-        },
-      );
-    });
+
     super.onInit();
   }
 
@@ -223,8 +216,16 @@ class ControllerMapEditPolygone extends GetxController {
   void removePoint() {
     if (polyMethods!.polygones.isNotEmpty &&
         polyMethods!.polygones.first.points.isNotEmpty) {
-      polyMethods!.polygones.first.points.removeLast();
-      polyMethods!.currentPointMove = polyMethods!.currentPointMove! - 1;
+      if (polyMethods!.currentPointMove == null) {
+        polyMethods!.routePoints.removeLast();
+        // polyMethods!.polygones.first.points.removeLast();
+      } else {
+        if (polyMethods!.currentPointMove! >= 0) {
+          polyMethods!.routePoints.removeAt(polyMethods!.currentPointMove!);
+        }
+        // polyMethods!.currentPointMove = polyMethods!.currentPointMove! - 1;
+      }
+      polyMethods!.createUniquePolygone();
 
       // isMovingMark = true; // se habilita el movimiento de la marka
       update(['update_map']);

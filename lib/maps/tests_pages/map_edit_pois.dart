@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_maps_creator_v3/maps/controllers/controller_adit.dart';
 import 'package:flutter_maps_creator_v3/maps/controllers/controller_search_route.dart';
@@ -10,9 +8,8 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class MapEditPOIS extends StatelessWidget {
   final LatLng? target;
-  final ControllerMapEdit cG = Get.put(ControllerMapEdit());
 
-  MapEditPOIS({super.key, this.target});
+  const MapEditPOIS({super.key, this.target});
 
   @override
   Widget build(BuildContext context) {
@@ -20,6 +17,7 @@ class MapEditPOIS extends StatelessWidget {
 
     final ControllerSearchRoute controllerSeach =
         Get.find<ControllerSearchRoute>();
+    final ControllerMapEdit cG = Get.find<ControllerMapEdit>();
 
     return Stack(
       children: [
@@ -134,6 +132,7 @@ class MapEditPOIS extends StatelessWidget {
                     ),
                   ),
                 )))),
+        /*
         Positioned.fill(
             child: Align(
           alignment: Alignment.bottomCenter,
@@ -143,6 +142,9 @@ class MapEditPOIS extends StatelessWidget {
               children: [
                 const Spacer(),
                 FloatingActionButton(
+                  backgroundColor: Theme.of(context)
+                      .floatingActionButtonTheme
+                      .backgroundColor,
                   onPressed: () {
                     log('gola');
                   },
@@ -152,6 +154,7 @@ class MapEditPOIS extends StatelessWidget {
             ),
           ),
         ))
+         */
       ],
     );
   }

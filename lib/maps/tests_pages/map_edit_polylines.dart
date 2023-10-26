@@ -13,14 +13,11 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'dart:math' as math;
 
 class MapEditPolylines extends StatelessWidget {
-  final LatLng? target;
-  final ControllerMapEditPolyline controller =
-      Get.put(ControllerMapEditPolyline());
-
-  MapEditPolylines({super.key, this.target});
+  const MapEditPolylines({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final ControllerMapEditPolyline controller = Get.find();
     Size size = MediaQuery.of(context).size;
     double iconSize = size.width * .04;
     double splashRadius = math.max(
@@ -36,8 +33,7 @@ class MapEditPolylines extends StatelessWidget {
               return GoogleMap(
                 zoomControlsEnabled: false,
                 initialCameraPosition: CameraPosition(
-                    target: target ?? const LatLng(20.5215443, -99.8939799),
-                    zoom: 12),
+                    target: const LatLng(20.5215443, -99.8939799), zoom: 12),
                 onCameraMove: controller.onCameraMove,
                 onMapCreated: (controllermap) {
                   controller.controllerL = controllermap;
@@ -53,17 +49,17 @@ class MapEditPolylines extends StatelessWidget {
                 alignment: Alignment.bottomCenter,
                 child: Container(
                   margin:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 0),
                   //color: Colors.white,
                   width: size.width,
                   height: size.height * .1,
                   child: GetBuilder<ControllerMapEditPolyline>(
                       id: 'area_buttons',
                       builder: (controller) {
+                        // return Container();
                         return Stack(
                           children: [
                             Card(
-                              elevation: 2,
                               shape: const DurmaShape(
                                   borderRadius: Radius.circular(15),
                                   side: BorderSide.none),
@@ -112,9 +108,15 @@ class MapEditPolylines extends StatelessWidget {
                                 const Spacer(),
                                 FloatingActionButton(
                                   onPressed: () {
-                                    log('gola');
+                                    controller.polyMethods!.polylines.clear();
+                                    controller.polyMethods!.routePoints.clear();
+
+                                    controller.polyMethods!.currentPointMove =
+                                        null;
+                                    controller
+                                        .update(['update_map', 'area_buttons']);
                                   },
-                                  child: const Icon(Icons.save),
+                                  child: const Icon(Icons.delete),
                                 )
                               ],
                             ),
@@ -225,7 +227,7 @@ class MapEditPolylines extends StatelessWidget {
               }
               log('update_info_window');
               return const SizedBox();
-            })
+            }),
       ],
     );
   }

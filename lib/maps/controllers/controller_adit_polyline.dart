@@ -46,7 +46,7 @@ class ControllerMapEditPolyline extends GetxController {
     }
     if (polyMethods!.currentDestination != null &&
         polyMethods!.currentPointMove == null) {
-      // es para que se muestre la ventanida de informacion al marcar el punto y y b
+      // es para que se muestre la ventanita de informacion al marcar el punto y y b
       // b es currentDestination y si no es nulo es porque se termino de marcar el b
       update(['update_info_window']);
     }
@@ -272,13 +272,13 @@ class ControllerMapEditPolyline extends GetxController {
         // si esta vacio
         polyMethods!.polylines.add(oldPoly);
       }
-      log('addPoint');
-      log('oldPoly.points.length:B: ${oldPoly.points.length}');
-      log('newLatlng:: $newLatlng');
-      log('oldPoly.points.last: ${oldPoly.points.last}');
+      // log('addPoint');
+      // log('oldPoly.points.length:B: ${oldPoly.points.length}');
+      // log('newLatlng:: $newLatlng');
+      // log('oldPoly.points.last: ${oldPoly.points.last}');
       //if (oldPoly.points.last != newLatlng) {
       if (_isMedium(polyMethods!.routePoints, newLatlng)) {
-        log('_isMedium::  ');
+        // log('_isMedium::  ');
 
         /// si esta en medio agregar otro punto a partir de donde se encontro
         oldPoly.points.insert(polyMethods!.routePoints.indexOf(newLatlng),

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'dart:ui' as UI;
 import 'package:flutter/material.dart';
@@ -34,7 +35,9 @@ class MarkerGenerator {
   Para cargar imagenes locales
    */
   static Future<UI.Image> getImageAsset(String imageAssetPath) async {
+    log('imageAssetPath :::: $imageAssetPath');
     final ByteData data = await rootBundle.load(imageAssetPath);
+    log('data::::: ${data.lengthInBytes}');
     final Completer<UI.Image> completer = Completer();
     UI.decodeImageFromList(Uint8List.view(data.buffer), (UI.Image img) {
       return completer.complete(img);
