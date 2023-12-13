@@ -45,6 +45,13 @@ class MarkerGenerator {
     return completer.future;
   }
 
+  static Future<UI.Image> getImageFromBytes(Uint8List fileData) async {
+    // Decodifica los bytes en una imagen
+    UI.Codec codec = await UI.instantiateImageCodec(fileData);
+    UI.FrameInfo frameInfo = await codec.getNextFrame();
+    return frameInfo.image;
+  }
+
   static Future<UI.Image> getSvgAsset(String svgAssetPath, String key,
       {Size size = const Size(25, 25), String color = '#0d0d0d'}) async {
     String svgString = await rootBundle.loadString(svgAssetPath);
